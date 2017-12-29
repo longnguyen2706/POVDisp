@@ -1,11 +1,11 @@
 from collections import Counter
-
 import cv2
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+import copy
 
-NUM_LEDS = 20
+NUM_LEDS = 10
 IMAGE_SIZE = NUM_LEDS *2
 
 def read_image(image_dir):
@@ -99,20 +99,51 @@ def displayable_pixels(deg):
         for l in range (1, NUM_LEDS+1):
             (x,y) = pol2cart(l, i*deg*math.pi/180, True)
             displayable_pixels.append((x,y))
-    print("displayable pixels", displayable_pixels)
+
+    # print("displayable pixels", displayable_pixels)
     print (Counter(displayable_pixels).keys())
     print (Counter(displayable_pixels).values())
     print (len(Counter(displayable_pixels).keys()))
     return displayable_pixels
 
-def displayable_img(displayable_pixels):
-    img = np.zeros((IMAGE_SIZE+1, IMAGE_SIZE+1))
+def displayable_region(displayable_pixels):
+    img_region = np.zeros((IMAGE_SIZE+1, IMAGE_SIZE+1))
     for (x, y) in displayable_pixels:
         x_cord = x + int(IMAGE_SIZE/2)
         y_cord = y + int(IMAGE_SIZE/2)
-        img[x_cord][y_cord] = 255
+        img_region[x_cord][y_cord] = 255
 
+    return img_region
+
+def displayale_img(cardesian_img, displayable_pixels):
+    img = np.zeros((IMAGE_SIZE+1, IMAGE_SIZE+1))
+    for (x, y) in displayable_pixels:
+        for pixel in cardesian_img:
+            x_cord = x + int(IMAGE_SIZE / 2)
+            y_cord = y + int(IMAGE_SIZE / 2)
+            if (x == pixel.x and y == pixel.y):
+                img[x_cord][y_cord] = pixel.value
     return img
+
+def img_to_led_disp(cardesian_img, deg):
+    led_strip_data = []
+    num_segs = int(360 / deg)
+    data_to_map = copy.copy(cardesian_img)
+    for i in range(0, num_segs):
+        led_strip = []
+        for l in range(1, NUM_LEDS + 1):
+            l_val = 0
+            (x, y) = pol2cart(l, i * deg * math.pi / 180, True)
+            for pixel in data_to_map:
+                if (x == pixel.x and y == pixel.y):
+                    if pixel.value == 255:
+                        l_val = 1
+                    data_to_map.remove(pixel)
+            led_strip.append(l_val)
+        led_strip_data.append(led_strip)
+        
+    print("led strip data", led_strip_data)
+    return led_strip_data
 
 class CardesianPixel():
     def __init__(self):
@@ -132,7 +163,7 @@ class PolarPixel():
     def __repr__(self):
         return "<(r, theta, val): %s, %s, %s>\n" % (self.r, self.theta, self.value)
 
-img = read_image('/home/long/Documents/POVBike/Simulator/phone_icon.png')
+img = read_image('/home/long/Documents/POVBike/Simulator/logo.png')
 show_image(img, 'original image')
 
 img_resized = resize_image(img)
@@ -147,6 +178,11 @@ show_image(img_binary, 'binary image')
 cardesian_img = convert_to_cardesian(img_binary)
 polar_img = convert_to_polar(cardesian_img)
 
-displayable_pixels = displayable_pixels(5)
-displayable_img = displayable_img(displayable_pixels)
+displayable_pixels = displayable_pixels(10)
+displayable_region = displayable_region(displayable_pixels)
+show_image(displayable_region, 'displayable region')
+
+displayable_img = displayale_img(cardesian_img, displayable_pixels)
 show_image(displayable_img, 'displayable image')
+
+img_to_led_disp(cardesian_img, 10)

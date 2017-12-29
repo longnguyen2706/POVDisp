@@ -4,12 +4,18 @@
 var ledStrip = document.getElementById("led-strip");
 ledStrip.addEventListener('click', onClick, false);
 // var i = 0;
-var numLed = 5;
+var numLed = 10;
 var ledOff = 'black.png';
 var ledOn = 'red.png';
+var numOfRotation = 1;
+var div = 36;
+var numOfTicks = numOfRotation*div;
+var tPerTick = 1/(1*div)*1000;
 
 function onClick() {
-		var ledStatesArr = [[0, 0, 0, 0, 1], [0, 0, 0, 1, 1], [0, 0, 1, 1, 1], [0, 1, 1, 1, 1], [1, 1, 1, 1, 1]];
+		// var ledStatesArr = [[0, 0, 0, 0, 1], [0, 0, 0, 1, 1], [0, 0, 1, 1, 1], [0, 1, 1, 1, 1], [1, 1, 1, 1, 1]];
+		var ledStatesArr = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 0, 0, 1, 0, 1, 1], [0, 0, 0, 0, 1, 1, 1, 1, 0, 1], [0, 0, 0, 1, 0, 1, 1, 1, 0, 1], [0, 0, 0, 0, 1, 1, 1, 1, 1, 1], [0, 0, 0, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 1, 1, 1, 1, 0, 0], [0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 1, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 1, 0], [0, 0, 0, 0, 0, 0, 1, 1, 1, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 1, 1, 1, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 0, 0], [0, 0, 0, 0, 0, 0, 1, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 0, 0, 0, 0, 0], [0, 0, 0, 1, 1, 1, 1, 1, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [0, 0, 0, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 1, 1, 1, 1, 0, 1], [0, 0, 0, 0, 0, 1, 1, 1, 0, 1], [0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+
     	// for (j =0; j<5; j++){
     	// 	// var delayTime = delay(2, 5);
     	// 	// setTimeout(rotate(ledStatesArr[j]), delayTime);
@@ -34,18 +40,18 @@ function onClick() {
 
     	var sequence = Promise.resolve();
 
-    	for (let i = 0; i<100; i++){
+    	for (let i = 0; i<numOfTicks; i++){
     		sequence = sequence.then(function(){
     			window.setTimeout(function(){
-	    				rotate(ledStatesArr[i%5], i);
-	    				console.log('sequence time', 720*(i+1));
-	    			}, 720*(i+1));
+	    				rotate(ledStatesArr[i%numLed], i);
+	    				console.log('sequence time', tPerTick*(i+1));
+	    			}, tPerTick*(i+1));
 	    		// rotate(ledStatesArr[i%5], i);
 
     		}).then(function(){
     			window.setTimeout(function(){
-    				updateLed(ledStatesArr[i%5]);
-    			},720*(i+1));
+    				updateLed(ledStatesArr[i%numLed]);
+    			},tPerTick*(i+1));
     			// updateLed(ledStatesArr[i%5]);
     		});
     	}
@@ -67,29 +73,45 @@ function rotate(ledStates, j){
     		
 	    // i = i+1;
 	    //  var deg = 72*i;
-	    
-	    var maxDeg = 72*(j+1);
-	    var deg = 72*j;
-	     console.log('max deg', maxDeg);
-	     var sequence = Promise.resolve();
-	     for (let i =j; i<72+j; i++){
-	     	 
-	     	 sequence = sequence.then(function(){
-	     	 	deg = deg+1;
-	     	 	console.log('loop time set', 720*(j+1)+10*i);
-	     	 	 window.setTimeout(rotateToAngle(ledStates, deg), 720*(j+1)+10*i);
+	    //
+	    // var maxDeg = 72*(j+1);
+	    // var deg = 72*j;
+	    //  console.log('max deg', maxDeg);
+	    //  var sequence = Promise.resolve();
+	    //  for (let i =j; i<72+j; i++){
+	    //
+	    //  	 sequence = sequence.then(function(){
+	    //  	 	deg = deg+1;
+	    //  	 	console.log('loop time set', 720*(j+1)+10*i);
+	    //  	 	 window.setTimeout(rotateToAngle(ledStates, deg), 720*(j+1)+10*i);
+        //
+	    //  	 })
+	    //
+	    //
+	    // }
 
-	     	 })
-	     	
-	    	
-	    }
-	   
+	var deg = 360/div*(j+1);
+	var ledStripClone = ledStrip.cloneNode(true);
+	console.log('set deg', deg);
+	ledStripClone.removeAttribute('style');
+	     	 var css = '-webkit-transform: rotate(' + deg + 'deg); ';
+	    ledStrip.setAttribute(
+	        'style', css
+	        );
+	    console.log(css);
+	document.getElementById("led-circle").appendChild(ledStripClone);
 	    	// setTimeout(function(){
 	    	// 	updateLed(ledStates)
 	    	// }, 100*j);
     // }, 100*i);
     // updateLed(ledStates);
 
+}
+
+function createLedStrip(stripNo){
+	for (let i = 1; i<numLed+1; i++){
+		var led = document.createElement('div');
+	}
 }
 function rotateToAngle(ledStates, deg){
 	console.log('set deg', deg);

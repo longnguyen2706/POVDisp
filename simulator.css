@@ -4,25 +4,25 @@
 
 #led-strip {
     -webkit-transition: -webkit-transform;
-    width: 20px;
+    width: 10px;
 	height: auto;
 	margin: 0 auto;
 }
 
 .led {
-	width: 20px;
-	height: 20px;
+	width: 10px;
+	height: 10px;
 	display: block;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	background-size: cover;
 }
 
-#led1, #led2, #led3, #led4, #led5{
+#led1, #led2, #led3, #led4, #led5, #led6, #led7, #led8, #led9, #led10{
 	background-image: url('black.png');
 }
 
-#led6, #led7, #led8, #led9, #led10{
+#led11, #led12, #led13, #led14, #led15, #led16, #led17, #led18, #led19, #led20{
 	background-color: transparent;
 }
 .wrapper{
