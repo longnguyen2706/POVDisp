@@ -1,0 +1,30 @@
+/*img {
+    -webkit-transition: -webkit-transform 2s ease-out;
+}*/
+
+#led-strip {
+    -webkit-transition: -webkit-transform;
+    width: 20px;
+	height: auto;
+	margin: 0 auto;
+}
+
+.led {
+	width: 20px;
+	height: 20px;
+	display: block;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	background-size: cover;
+}
+
+#led1, #led2, #led3, #led4, #led5{
+	background-image: url('black.png');
+}
+
+#led6, #led7, #led8, #led9, #led10{
+	background-color: transparent;
+}
+.wrapper{
+	margin: 0 auto;
+}
